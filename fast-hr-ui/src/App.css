@@ -1,38 +1,301 @@
-.App {
-  text-align: center;
+/* =========================
+   Fast HR - Global Theme
+   React Bootstrap friendly.
+   Cartoonish but modern.
+   ========================= */
+
+/* 1) Theme tokens (expand later) */
+:root {
+  /* Logo oranges (tweak anytime) */
+  --hr-orange-900: #ff3b1f; /* deep orange-red */
+  --hr-orange-700: #ff4a21; /* strong orange */
+  --hr-orange-500: #ff6a2a; /* bright orange */
+  --hr-orange-300: #ff8a3d; /* soft orange */
+
+  /* Text + surfaces */
+  --hr-white: #ffffff;
+  --hr-white-85: rgba(255, 255, 255, 0.85);
+  --hr-white-70: rgba(255, 255, 255, 0.70);
+  --hr-white-50: rgba(255, 255, 255, 0.50);
+
+  /* “Cartoon” UI styling */
+  --hr-radius-xl: 22px;
+  --hr-radius-lg: 18px;
+  --hr-radius-md: 14px;
+  --hr-radius-sm: 12px;
+
+  --hr-border: 2px solid rgba(255, 255, 255, 0.18);
+  --hr-border-strong: 2px solid rgba(255, 255, 255, 0.35);
+
+  /* Soft shadow (no harsh black) */
+  --hr-shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.20);
+  --hr-shadow-md: 0 12px 26px rgba(0, 0, 0, 0.16);
+  --hr-shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.12);
+
+  /* Focus ring */
+  --hr-focus: 0 0 0 4px rgba(255, 255, 255, 0.22);
+
+  /* Layout */
+  --hr-max-width: 1180px;
+  --hr-gap: 18px;
+
+  /* Gradient background */
+  --hr-bg: radial-gradient(
+      circle at 20% 10%,
+      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.00) 45%
+    ),
+    linear-gradient(135deg, var(--hr-orange-900), var(--hr-orange-500));
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* 2) Global reset-ish */
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html, body {
+  height: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
+body {
+  margin: 0;
+  color: var(--hr-white);
+  background: var(--hr-bg);
+  background-attachment: fixed;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Make links match white theme */
+a {
+  color: var(--hr-white);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--hr-white-85);
+  text-decoration: underline;
+}
+
+/* 3) Simple layout helpers */
+.app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.app-container {
+  width: 100%;
+  max-width: var(--hr-max-width);
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hr-gap);
+}
+
+.row-gap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--hr-gap);
+}
+
+.center {
+  display: grid;
+  place-items: center;
+}
+
+/* 4) “Cartoon card” surface */
+.hr-card {
+  border-radius: var(--hr-radius-xl);
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: var(--hr-shadow-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.hr-card--padded {
+  padding: 18px;
+}
+
+.hr-card--hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hr-shadow-lg);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* 5) React Bootstrap: gentle overrides (safe defaults) */
+.navbar, .dropdown-menu, .modal-content {
+  color: var(--hr-white);
+}
+
+/* Navbar */
+.hr-navbar {
+  border-bottom: var(--hr-border);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hr-brand {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
 }
 
-.App-link {
-  color: #61dafb;
+.hr-brand img {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hr-navlink {
+  color: var(--hr-white) !important;
+  opacity: 0.95;
+  border-radius: 14px;
+  padding: 8px 12px !important;
 }
+
+.hr-navlink:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+/* 6) Buttons (cartoon bounce + thick-ish look) */
+.btn {
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  border-width: 2px !important;
+}
+
+.btn:focus {
+  box-shadow: var(--hr-focus) !important;
+}
+
+.hr-btn-primary {
+  color: var(--hr-white) !important;
+  background: linear-gradient(135deg, var(--hr-orange-700), var(--hr-orange-300)) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: var(--hr-shadow-sm);
+}
+
+.hr-btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.hr-btn-ghost {
+  color: var(--hr-white) !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.hr-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* 7) Inputs / forms */
+.form-control, .form-select {
+  border-radius: 16px !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--hr-white) !important;
+}
+
+.form-control::placeholder {
+  color: var(--hr-white-70) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  box-shadow: var(--hr-focus) !important;
+  border-color: rgba(255, 255, 255, 0.40) !important;
+}
+
+/* Fix dropdown text color for some browsers */
+.form-select option {
+  color: #111;
+}
+
+/* 8) Tables (admin dashboards) */
+.table {
+  color: var(--hr-white) !important;
+}
+
+.hr-table {
+  overflow: hidden;
+  border-radius: var(--hr-radius-xl);
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hr-table .table thead th {
+  border-bottom: var(--hr-border-strong) !important;
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--hr-white) !important;
+}
+
+.hr-table .table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 9) Badges / pills */
+.hr-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--hr-white);
+  font-weight: 700;
+}
+
+/* 10) Icons */
+.hr-icon {
+  vertical-align: -0.12em;
+}
+
+/* 11) Page headers */
+.hr-page-title {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.hr-page-subtitle {
+  margin: 6px 0 0 0;
+  color: var(--hr-white-85);
+}
+
+/* 12) Small “cartoon” motion */
+.pop {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.pop:hover {
+  transform: translateY(-2px) rotate(-0.2deg);
+  box-shadow: var(--hr-shadow-lg);
+}
+
+/* 13) Optional: Toast/Alert style */
+.alert {
+  border-radius: var(--hr-radius-lg) !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--hr-white) !important;
+}
+
+/* 14) Utility spacing (expand as needed) */
+.mt-18 { margin-top: 18px; }
+.mb-18 { margin-bottom: 18px; }
+.p-18 { padding: 18px; }
