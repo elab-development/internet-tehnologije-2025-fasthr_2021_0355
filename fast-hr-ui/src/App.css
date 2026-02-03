@@ -299,3 +299,356 @@ a:hover {
 .mt-18 { margin-top: 18px; }
 .mb-18 { margin-bottom: 18px; }
 .p-18 { padding: 18px; }
+
+/* =========================
+   Fast HR - Global Theme
+   Orange + white.
+   Cartoonish but modern.
+   ========================= */
+
+:root {
+  --hr-orange-900: #ff3b1f;
+  --hr-orange-700: #ff4a21;
+  --hr-orange-500: #ff6a2a;
+  --hr-orange-300: #ff8a3d;
+
+  --hr-white: #ffffff;
+  --hr-white-85: rgba(255, 255, 255, 0.85);
+  --hr-white-70: rgba(255, 255, 255, 0.70);
+
+  --hr-radius-xl: 22px;
+  --hr-radius-lg: 18px;
+
+  --hr-border: 2px solid rgba(255, 255, 255, 0.18);
+  --hr-border-strong: 2px solid rgba(255, 255, 255, 0.35);
+
+  --hr-shadow-md: 0 12px 26px rgba(0, 0, 0, 0.16);
+  --hr-shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.20);
+
+  --hr-focus: 0 0 0 4px rgba(255, 255, 255, 0.22);
+
+  --hr-max-width: 1180px;
+
+  --hr-bg: radial-gradient(
+      circle at 20% 10%,
+      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.00) 45%
+    ),
+    linear-gradient(135deg, var(--hr-orange-900), var(--hr-orange-500));
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  color: var(--hr-white);
+  background: var(--hr-bg);
+  background-attachment: fixed;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--hr-white); }
+a:hover { color: var(--hr-white-85); }
+
+.app-shell {
+  min-height: 100vh;
+}
+
+/* Layout container */
+.app-container {
+  width: 100%;
+  max-width: var(--hr-max-width);
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Base card */
+.hr-card {
+  border-radius: var(--hr-radius-xl);
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: var(--hr-shadow-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.hr-card--padded {
+  padding: 18px;
+}
+
+.hr-card:hover {
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* Typography */
+.hr-page-title {
+  font-size: 34px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.hr-page-subtitle {
+  margin: 6px 0 0 0;
+  color: var(--hr-white-85);
+}
+
+/* Icons */
+.hr-icon {
+  vertical-align: -0.12em;
+}
+
+/* Auth layout */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+/* Important: don't use "gap" on bootstrap .row itself.
+   We'll create spacing via padding. */
+.auth-grid {
+  width: 100%;
+}
+
+/* Add spacing between columns in a bootstrap-safe way */
+.auth-left {
+  padding-right: 12px;
+}
+
+.auth-right {
+  padding-left: 12px;
+}
+
+/* Keep both panels same height */
+.auth-left .about-panel,
+.auth-right .auth-card {
+  height: 100%;
+}
+
+/* If you want the right card to feel a bit narrower and centered vertically */
+.auth-card {
+  min-height: 680px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-logo-wrap {
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+}
+
+.auth-logo {
+  width: 150px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 10px;
+}
+
+.auth-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.auth-subtitle {
+  margin: 6px 0 14px 0;
+  color: var(--hr-white-85);
+}
+
+.auth-form label {
+  font-weight: 800;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--hr-white-70);
+}
+
+.auth-footer {
+  margin-top: 14px;
+  color: var(--hr-white-85);
+  text-align: center;
+}
+
+/* Link button */
+.link-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--hr-white);
+  font-weight: 900;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--hr-white-85);
+}
+
+/* Alerts */
+.hr-alert {
+  border-radius: var(--hr-radius-lg) !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: var(--hr-white) !important;
+}
+
+/* Inputs */
+.form-control, .form-select {
+  border-radius: 16px !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--hr-white) !important;
+}
+
+.form-control::placeholder {
+  color: var(--hr-white-70) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  box-shadow: var(--hr-focus) !important;
+  border-color: rgba(255, 255, 255, 0.40) !important;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 16px !important;
+  font-weight: 900 !important;
+  border-width: 2px !important;
+}
+
+.btn:focus {
+  box-shadow: var(--hr-focus) !important;
+}
+
+.hr-btn-primary {
+  color: var(--hr-white) !important;
+  background: linear-gradient(135deg, var(--hr-orange-700), var(--hr-orange-300)) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.hr-btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* About panel */
+.about-panel {
+  height: 100%;
+}
+
+.about-header {
+  margin-bottom: 14px;
+}
+
+.about-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.about-card {
+  border-radius: var(--hr-radius-xl) !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+.about-card-body {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-card-left {
+  flex: 1;
+}
+
+.about-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.about-card-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.about-card-text {
+  color: var(--hr-white-85);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.about-card-right {
+  width: 110px;
+  min-width: 110px;
+  display: grid;
+  place-items: center;
+}
+
+.about-lottie {
+  width: 110px;
+  height: 110px;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .auth-left {
+    display: none;
+  }
+}
+
+.image-preview-wrap {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.image-preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: var(--hr-border);
+}
+
+.image-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
