@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Position extends Model
 {
+   use HasFactory;
+
     protected $fillable = [
         'name',
         'department_id',
@@ -18,6 +22,7 @@ class Position extends Model
     protected $casts = [
         'min_salary' => 'decimal:2',
         'max_salary' => 'decimal:2',
+        'default_benefits' => 'array',
     ];
 
     // POSITION 1..1 -> DEPARTMENT

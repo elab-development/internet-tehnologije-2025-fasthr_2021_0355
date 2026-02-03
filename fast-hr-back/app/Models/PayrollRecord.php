@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PayrollRecord extends Model
 {
+   use HasFactory;
+
     protected $fillable = [
         'employee_id',
         'hr_worker_id',

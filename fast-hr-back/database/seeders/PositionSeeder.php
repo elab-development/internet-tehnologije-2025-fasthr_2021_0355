@@ -12,12 +12,30 @@ class PositionSeeder extends Seeder
     {
         $departments = Department::all();
 
+        // Dovoljno široka lista da u svakom department-u uzmemo 3 različita naziva.
+        $positionNames = [
+            'Analyst',
+            'Specialist',
+            'Coordinator',
+            'Engineer',
+            'Manager',
+            'Assistant',
+            'Consultant',
+            'Administrator',
+            'Associate',
+            'Officer',
+        ];
+
         foreach ($departments as $department) {
-            Position::factory()
-                ->count(3)
-                ->create([
+            // Uzmi 3 različita naziva za ovaj department.
+            $namesForDepartment = collect($positionNames)->shuffle()->take(3)->values();
+
+            foreach ($namesForDepartment as $name) {
+                Position::factory()->create([
                     'department_id' => $department->id,
+                    'name' => $name,
                 ]);
+            }
         }
     }
 }
