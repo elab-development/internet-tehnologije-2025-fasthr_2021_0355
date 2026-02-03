@@ -12,14 +12,13 @@ use Illuminate\Support\Facades\Route;
 // Auth.
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-
+Route::apiResource('positions', PositionController::class);
 // Protected routes (Sanctum).
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     // CRUD.
     Route::apiResource('departments', DepartmentController::class);
-    Route::apiResource('positions', PositionController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('payroll-records', PayrollRecordController::class);
     Route::apiResource('performance-reviews', PerformanceReviewController::class);
