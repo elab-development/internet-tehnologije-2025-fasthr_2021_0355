@@ -652,3 +652,431 @@ a:hover { color: var(--hr-white-85); }
   gap: 10px;
   flex-wrap: wrap;
 }
+
+/* --- Home pages --- */
+.home-page {
+  min-height: 100vh;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.home-hero {
+  align-items: center;
+}
+
+.home-text p {
+  color: var(--hr-white-85);
+  font-weight: 600;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.home-right {
+  display: grid;
+  place-items: center;
+}
+
+.home-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: var(--hr-radius-xl);
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 10px;
+  box-shadow: var(--hr-shadow-md);
+}
+
+.home-divider {
+  height: 1px;
+  margin: 18px 0;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.home-lottie-card {
+  border-radius: var(--hr-radius-xl) !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.home-lottie-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.home-section-title {
+  font-weight: 900;
+  margin: 0 0 6px 0;
+}
+
+.home-section-text {
+  margin: 0;
+  color: var(--hr-white-85);
+  font-weight: 600;
+  line-height: 1.4;
+  max-width: 640px;
+}
+
+.home-lottie {
+  width: 160px;
+  height: 160px;
+}
+
+/* Responsive: stack image below text */
+@media (max-width: 991px) {
+  .home-right {
+    margin-top: 14px;
+  }
+
+  .home-lottie-body {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .home-section-text {
+    max-width: 100%;
+  }
+}
+
+/* =========================
+   NavMenu / Layout CSS
+   Paste into App.css (full block)
+   ========================= */
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 270px;
+  min-width: 270px;
+  padding: 14px;
+  border-right: var(--hr-border);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sidebar--collapsed {
+  width: 86px;
+  min-width: 86px;
+}
+
+.app-main {
+  flex: 1;
+  padding: 18px;
+}
+
+/* Sidebar top */
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar--collapsed .sidebar-top {
+  justify-content: center;
+}
+
+/* Toggle button (hamburger) only in expanded mode */
+.sidebar-toggle {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--hr-white);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Logo as a button (used for expand/collapse) */
+.sidebar-logo-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: 1;
+}
+
+.sidebar-logo-btn:focus {
+  outline: none;
+}
+
+.logo-large {
+  height: 42px;
+  width: auto;
+}
+
+.logo-small {
+  height: 34px;
+  width: auto;
+}
+
+/* Links */
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  margin-top: 6px;
+}
+
+.nav-item {
+  display: block;
+  border-radius: 18px;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--hr-white) !important;
+  padding: 12px 12px;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.16);
+  border: var(--hr-border-strong);
+}
+
+.nav-item-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-icon {
+  font-size: 18px;
+  width: 28px;
+  display: grid;
+  place-items: center;
+}
+
+.nav-label {
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+/* Bottom: user + logout */
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* User card */
+.user-box {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Expanded user row */
+.user-box-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.user-avatar {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border: var(--hr-border);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.user-meta {
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.user-email {
+  color: var(--hr-white-85);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.user-role {
+  color: var(--hr-white-70);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.logout-btn {
+  border-radius: 18px !important;
+  padding: 12px !important;
+}
+
+/* Collapsed: center nav items */
+.sidebar--collapsed .nav-item-inner {
+  justify-content: center;
+}
+
+/* Collapsed: center logout */
+.sidebar--collapsed .logout-btn {
+  display: grid;
+  place-items: center;
+  padding: 12px !important;
+}
+
+.sidebar--collapsed .logout-btn .me-2 {
+  margin-right: 0 !important;
+}
+
+/* Collapsed: avatar perfectly centered in its card */
+.sidebar--collapsed .user-box {
+  height: 72px;
+}
+
+.sidebar--collapsed .user-box-inner {
+  width: 100%;
+  height: 72px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+.sidebar--collapsed .user-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive (optional): hide sidebar on very small screens later if needed */
+@media (max-width: 720px) {
+  .app-main {
+    padding: 12px;
+  }
+}
+
+/* Clickable table rows */
+.table-row-clickable {
+  cursor: pointer;
+}
+
+.table-row-clickable:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Stats cards */
+.stat-card {
+  border-radius: var(--hr-radius-xl) !important;
+  border: var(--hr-border) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.stat-label {
+  font-weight: 900;
+  color: var(--hr-white-85);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-weight: 900;
+  font-size: 26px;
+}
+
+/* Details modal content */
+.details-grid {
+  display: grid;
+  gap: 10px;
+  color: var(--hr-white-85);
+  font-weight: 650;
+}
+
+.details-block {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.details-title {
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: var(--hr-white);
+}
+
+.details-text {
+  line-height: 1.4;
+}
+
+/* =========================
+   Fast HR - Modal Styling
+   ========================= */
+
+/* Darken the backdrop a bit (keeps your orange visible) */
+.hr-modal-backdrop {
+  opacity: 0.75 !important;
+}
+
+/* Main modal surface */
+.hr-modal-content {
+  border-radius: var(--hr-radius-xl) !important;
+  border: var(--hr-border) !important;
+
+  /* “Glass” + orange vibe */
+  background: rgba(255, 255, 255, 0.10) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  color: var(--hr-white) !important;
+  box-shadow: var(--hr-shadow-lg);
+}
+
+/* Header / footer */
+.hr-modal-header,
+.hr-modal-footer {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Title */
+.hr-modal-title {
+  font-weight: 900;
+  color: var(--hr-white);
+}
+
+/* Body */
+.hr-modal-body {
+  color: var(--hr-white-85);
+}
+
+/* Make bootstrap close button visible on dark background */
+.hr-modal .btn-close {
+  filter: invert(1);
+  opacity: 0.9;
+}
+
+.hr-modal .btn-close:hover {
+  opacity: 1;
+}
+
+/* Optional: ensure links inside modal remain readable */
+.hr-modal-content a {
+  color: var(--hr-white);
+}
