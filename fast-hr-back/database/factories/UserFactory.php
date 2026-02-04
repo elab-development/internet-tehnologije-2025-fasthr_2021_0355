@@ -10,14 +10,26 @@ class UserFactory extends Factory
 {
     public function definition(): array
     {
+        // Simple, public, no API key avatar sources:
+        // - pravatar.cc (small avatar, stable)
+        // - i.pravatar.cc is also common.
+        // We'll randomize by user ID-like seed so avatars differ.
+        $avatarId = $this->faker->numberBetween(1, 70);
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('password'),
-            'role' => 'employee', // default, može se menjati state-om.
+            'role' => 'employee', // default, can be changed with state().
             'status' => true,
-            'image_url' => $this->faker->boolean(70) ? $this->faker->imageUrl(256, 256, 'people') : null,
-            'position_id' => null, // setuje se u seederu za employe-e.
+
+            // 70% users get an avatar, small size.
+            // Example: https://i.pravatar.cc/80?img=12
+            'image_url' => $this->faker->boolean(70)
+                ? "https://i.pravatar.cc/80?img={$avatarId}"
+                : null,
+
+            'position_id' => null, // assigned in seeder for employees.
             'remember_token' => Str::random(10),
         ];
     }
