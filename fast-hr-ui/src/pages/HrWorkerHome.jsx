@@ -5,6 +5,9 @@ import Lottie from "lottie-react";
 import hrWorkerImg from "../assets/images/hr-worker.png";
 import hrWorkerAnim from "../assets/animations/hr-worker.json";
 
+// ✅ NEW: Birthdays carousel.
+import BirthdaysCarousel from "../components/BirthdaysCarousel";
+
 export default function HrWorkerHome() {
   const user = useMemo(() => {
     try {
@@ -51,7 +54,22 @@ export default function HrWorkerHome() {
 
           <div className="home-divider" />
 
-          <Row>
+          {/* ✅ NEW: Birthdays carousel section */}
+          <Row className="mt-3">
+            <Col lg={12}>
+              <BirthdaysCarousel
+                title="Team birthdays"
+                results={8}
+                nat="rs,gb,us"
+                autoPlay
+                interval={4500}
+                showControls
+                showIndicators={false}
+              />
+            </Col>
+          </Row>
+
+          <Row className="mt-3">
             <Col lg={12}>
               <Card className="home-lottie-card">
                 <Card.Body className="home-lottie-body">
@@ -63,7 +81,12 @@ export default function HrWorkerHome() {
                     </p>
                   </div>
 
-                  <Lottie style={{height:"300px", width:"600px"}} animationData={hrWorkerAnim} loop className="home-lottie" />
+                  <Lottie
+                    style={{ height: "300px", width: "600px" }}
+                    animationData={hrWorkerAnim}
+                    loop
+                    className="home-lottie"
+                  />
                 </Card.Body>
               </Card>
             </Col>
