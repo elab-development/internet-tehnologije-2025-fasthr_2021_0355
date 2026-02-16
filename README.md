@@ -2,7 +2,7 @@
 
 Fast HR je full-stack veb aplikacija za upravljanje osnovnim HR procesima: **departmani**, **pozicije**, **zaposleni**, **obračun plata (payroll)** i **performance review**. Sistem je organizovan po ulogama (role-based UI i API dozvole) i omogućava da se HR posao radi jasno, pregledno i lako za audit.
 
-![Fast HR Logo](./fast-hr-ui/src/assets/images/logo-large.png)
+![Fast HR Logo](./fast-hr-ui/public/favicon.ico)
 
 > Struktura repozitorijuma:
 > - `fast-hr-back` (Laravel REST API + Sanctum)
