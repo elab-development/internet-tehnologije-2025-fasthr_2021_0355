@@ -1,0 +1,1552 @@
+openapi: 3.0.3
+
+info:
+  title: Fast HR API
+  version: 1.0.0
+  description: >
+    OpenAPI specifikacija za Fast HR (Laravel + Sanctum). Base path: /api.
+    Zaštićene rute zahtevaju Sanctum token (Authorization: Bearer {token}).
+    Swagger UI je podešen da možeš da uneseš odvojene tokene za employee, hr_worker i admin ulogu.
+
+servers:
+  - url: /api
+    description: Laravel API base
+
+tags:
+  - name: Auth
+  - name: Public
+  - name: Departments
+  - name: Positions
+  - name: Users
+  - name: Payroll
+  - name: Performance
+  - name: Stats
+  - name: Metrics
+
+components:
+  securitySchemes:
+    employeeBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Token
+      description: "Employee token. Header: Authorization: Bearer {token}."
+    hrWorkerBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Token
+      description: "HR worker token. Header: Authorization: Bearer {token}."
+    adminBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Token
+      description: "Admin token. Header: Authorization: Bearer {token}."
+
+  parameters:
+    DepartmentId:
+      name: department
+      in: path
+      required: true
+      schema: { type: integer }
+    PositionId:
+      name: position
+      in: path
+      required: true
+      schema: { type: integer }
+    UserId:
+      name: user
+      in: path
+      required: true
+      schema: { type: integer }
+    PayrollRecordId:
+      name: payroll_record
+      in: path
+      required: true
+      schema: { type: integer }
+    PerformanceReviewId:
+      name: performance_review
+      in: path
+      required: true
+      schema: { type: integer }
+
+  schemas:
+    LaravelErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Not found."
+      required: [message]
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The given data was invalid."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+      required: [message, errors]
+
+    FailResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string, example: "Neispravni kredencijali." }
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+      required: [success, message, errors]
+
+    SuccessNullResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Uspešno." }
+        data: { nullable: true }
+      required: [success, message, data]
+
+    Department:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "Human Resources" }
+        description: { type: string, nullable: true, example: "People operations." }
+      required: [id, name]
+
+    Position:
+      type: object
+      properties:
+        id: { type: integer, example: 10 }
+        department_id: { type: integer, example: 1 }
+        name: { type: string, example: "Backend Developer" }
+        seniority_level: { type: string, example: "senior" }
+        min_salary: { type: number, example: 1200 }
+        max_salary: { type: number, example: 2500 }
+        default_benefits:
+          type: array
+          nullable: true
+          items: { type: string }
+          example: ["Health insurance", "Gym"]
+        department:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 1 }
+            name: { type: string, example: "Human Resources" }
+      required: [id, department_id, name, seniority_level, min_salary, max_salary]
+
+    User:
+      type: object
+      properties:
+        id: { type: integer, example: 5 }
+        name: { type: string, example: "Ana Anić" }
+        email: { type: string, format: email, example: "ana@email.com" }
+        role:
+          type: string
+          enum: [employee, hr_worker, admin]
+          example: employee
+        status: { type: boolean, example: true }
+        image_url: { type: string, nullable: true, example: "https://i.ibb.co/xyz/avatar.png" }
+        position_id: { type: integer, nullable: true, example: 10 }
+        position:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 10 }
+            name: { type: string, example: "Backend Developer" }
+            department_id: { type: integer, example: 1 }
+      required: [id, name, email, role, status]
+
+    PayrollRecord:
+      type: object
+      properties:
+        id: { type: integer, example: 100 }
+        employee_id: { type: integer, example: 5 }
+        hr_worker_id: { type: integer, example: 2 }
+        period_year: { type: integer, example: 2026 }
+        period_month: { type: integer, example: 2 }
+        base_salary: { type: number, example: 1500 }
+        bonus_amount: { type: number, nullable: true, example: 200 }
+        overtime_amount: { type: number, nullable: true, example: 50 }
+        benefits_amount: { type: number, nullable: true, example: 100 }
+        deductions_amount: { type: number, nullable: true, example: 80 }
+        net_amount: { type: number, nullable: true, example: 1770 }
+        status:
+          type: string
+          enum: [draft, approved, paid]
+          example: approved
+        employee:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 5 }
+            name: { type: string, example: "Ana Anić" }
+            email: { type: string, format: email, example: "ana@email.com" }
+        hr_worker:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 2 }
+            name: { type: string, example: "HR Worker" }
+            email: { type: string, format: email, example: "hr@fast.hr" }
+      required: [id, employee_id, hr_worker_id, period_year, period_month, base_salary, status]
+
+    PerformanceReview:
+      type: object
+      properties:
+        id: { type: integer, example: 300 }
+        employee_id: { type: integer, example: 5 }
+        hr_worker_id: { type: integer, example: 2 }
+        payroll_record_id: { type: integer, example: 100 }
+        period_start: { type: string, format: date, example: "2026-01-01" }
+        period_end: { type: string, format: date, example: "2026-01-31" }
+        overall_score: { type: number, minimum: 0, maximum: 5, example: 4.6 }
+        comments: { type: string, nullable: true, example: "Great performance." }
+        goals: { type: string, nullable: true, example: "Improve communication." }
+        hasSalaryImpact: { type: boolean, example: true }
+        employee:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 5 }
+            name: { type: string, example: "Ana Anić" }
+            email: { type: string, format: email, example: "ana@email.com" }
+        hr_worker:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 2 }
+            name: { type: string, example: "HR Worker" }
+            email: { type: string, format: email, example: "hr@fast.hr" }
+        payroll_record:
+          nullable: true
+          type: object
+          properties:
+            id: { type: integer, example: 100 }
+            period_year: { type: integer, example: 2026 }
+            period_month: { type: integer, example: 2 }
+            status: { type: string, example: "approved" }
+      required: [id, employee_id, hr_worker_id, payroll_record_id, period_start, period_end, overall_score, hasSalaryImpact]
+
+    AuthSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Prijava uspešna." }
+        data:
+          type: object
+          properties:
+            user: { $ref: "#/components/schemas/User" }
+            token: { type: string, example: "1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" }
+          required: [user, token]
+      required: [success, message, data]
+
+    DepartmentsListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Departments list." }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/Department" }
+          required: [items]
+      required: [success, message, data]
+
+    DepartmentSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Department created." }
+        data:
+          type: object
+          properties:
+            department: { $ref: "#/components/schemas/Department" }
+          required: [department]
+      required: [success, message, data]
+
+    PositionsListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Positions list." }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/Position" }
+          required: [items]
+      required: [success, message, data]
+
+    PositionSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Position details." }
+        data:
+          type: object
+          properties:
+            position: { $ref: "#/components/schemas/Position" }
+          required: [position]
+      required: [success, message, data]
+
+    UsersListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Users list." }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/User" }
+          required: [items]
+      required: [success, message, data]
+
+    UserSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "User details." }
+        data:
+          type: object
+          properties:
+            user: { $ref: "#/components/schemas/User" }
+          required: [user]
+      required: [success, message, data]
+
+    PayrollListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Payroll records list." }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/PayrollRecord" }
+          required: [items]
+      required: [success, message, data]
+
+    PayrollSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Payroll record details." }
+        data:
+          type: object
+          properties:
+            payroll_record: { $ref: "#/components/schemas/PayrollRecord" }
+          required: [payroll_record]
+      required: [success, message, data]
+
+    PerformanceReviewsListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Performance reviews list." }
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/PerformanceReview" }
+          required: [items]
+      required: [success, message, data]
+
+    PerformanceReviewSuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Performance review details." }
+        data:
+          type: object
+          properties:
+            performance_review: { $ref: "#/components/schemas/PerformanceReview" }
+          required: [performance_review]
+      required: [success, message, data]
+
+    DepartmentsStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Departments stats." }
+        data:
+          type: object
+          properties:
+            total_departments: { type: integer, example: 6 }
+          required: [total_departments]
+      required: [success, message, data]
+
+    PositionsStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Positions stats." }
+        data:
+          type: object
+          properties:
+            total_positions: { type: integer, example: 18 }
+            by_department:
+              type: array
+              items:
+                type: object
+                properties:
+                  department_id: { type: integer, example: 1 }
+                  count: { type: integer, example: 3 }
+                required: [department_id, count]
+          required: [total_positions, by_department]
+      required: [success, message, data]
+
+    UsersStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Users stats." }
+        data:
+          type: object
+          properties:
+            total_users: { type: integer, example: 24 }
+            active_users: { type: integer, example: 23 }
+            users_by_role:
+              type: array
+              items:
+                type: object
+                properties:
+                  role: { type: string, example: "employee" }
+                  count: { type: integer, example: 20 }
+                required: [role, count]
+          required: [total_users, active_users, users_by_role]
+      required: [success, message, data]
+
+    PayrollStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Payroll stats." }
+        data:
+          type: object
+          properties:
+            year: { type: integer, example: 2026 }
+            records_count: { type: integer, example: 60 }
+            sum_base_salary: { type: number, example: 90000 }
+            sum_net_amount: { type: number, example: 95000 }
+            records_by_status:
+              type: array
+              items:
+                type: object
+                properties:
+                  status: { type: string, example: "approved" }
+                  count: { type: integer, example: 30 }
+                required: [status, count]
+          required: [year, records_count, sum_base_salary, sum_net_amount, records_by_status]
+      required: [success, message, data]
+
+    PerformanceStatsResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Performance reviews stats." }
+        data:
+          type: object
+          properties:
+            total_reviews: { type: integer, example: 12 }
+            average_overall_score: { type: number, example: 4.2 }
+            reviews_with_salary_impact: { type: integer, example: 5 }
+          required: [total_reviews, average_overall_score, reviews_with_salary_impact]
+      required: [success, message, data]
+
+    MetricsOverviewResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "App overview metrics." }
+        data:
+          type: object
+          properties:
+            year: { type: integer, example: 2026 }
+            counts:
+              type: object
+              properties:
+                departments: { type: integer, example: 6 }
+                positions: { type: integer, example: 18 }
+                users: { type: integer, example: 24 }
+                payroll_records_in_year: { type: integer, example: 60 }
+                performance_reviews: { type: integer, example: 12 }
+              required: [departments, positions, users, payroll_records_in_year, performance_reviews]
+            users:
+              type: object
+              properties:
+                active_users: { type: integer, example: 23 }
+                by_role:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role: { type: string, example: "employee" }
+                      count: { type: integer, example: 20 }
+                    required: [role, count]
+              required: [active_users, by_role]
+            payroll:
+              type: object
+              properties:
+                sum_base_salary: { type: number, example: 90000 }
+                sum_net_amount: { type: number, example: 95000 }
+                by_status:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      status: { type: string, example: "draft" }
+                      count: { type: integer, example: 10 }
+                    required: [status, count]
+              required: [sum_base_salary, sum_net_amount, by_status]
+            performance:
+              type: object
+              properties:
+                avg_score: { type: number, example: 4.2 }
+                salary_impact_reviews: { type: integer, example: 5 }
+              required: [avg_score, salary_impact_reviews]
+            departments:
+              type: object
+              properties:
+                top_by_positions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      department_id: { type: integer, example: 1 }
+                      positions_count: { type: integer, example: 3 }
+                    required: [department_id, positions_count]
+              required: [top_by_positions]
+          required: [year, counts, users, payroll, performance, departments]
+      required: [success, message, data]
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register (employee / hr_worker / admin)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 100 }
+                email: { type: string, format: email, maxLength: 150 }
+                password: { type: string, minLength: 6, maxLength: 255 }
+                role: { type: string, enum: [employee, hr_worker, admin] }
+                status: { type: boolean, nullable: true }
+                image_url: { type: string, nullable: true, maxLength: 255 }
+                position_id:
+                  type: integer
+                  nullable: true
+                  description: "Obavezno ako je role=employee."
+              required: [name, email, password, role]
+            examples:
+              register_employee:
+                summary: Register employee
+                value:
+                  name: "Employee User"
+                  email: "employee@example.com"
+                  password: "password"
+                  role: "employee"
+                  position_id: 1
+              register_hr_worker:
+                summary: Register hr worker
+                value:
+                  name: "HR Worker"
+                  email: "hr@example.com"
+                  password: "password"
+                  role: "hr_worker"
+              register_admin:
+                summary: Register admin
+                value:
+                  name: "Admin"
+                  email: "admin@example.com"
+                  password: "password"
+                  role: "admin"
+      responses:
+        "201":
+          description: Created (user + token)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSuccessResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/FailResponse"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login (any role)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, format: email, maxLength: 150 }
+                password: { type: string, maxLength: 255 }
+              required: [email, password]
+            examples:
+              login:
+                value: { email: "employee@example.com", password: "password" }
+      responses:
+        "200":
+          description: Success (user + token)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSuccessResponse" }
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FailResponse" }
+        "403":
+          description: Inactive account
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FailResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout (any role)
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LaravelErrorResponse" }
+
+  /positions:
+    get:
+      tags: [Public, Positions]
+      summary: List positions (public)
+      security: []
+      parameters:
+        - name: department_id
+          in: query
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Positions list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionsListResponse" }
+
+    post:
+      tags: [Public, Positions]
+      summary: Create position (public route)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department_id: { type: integer }
+                name: { type: string, maxLength: 255 }
+                seniority_level: { type: string, maxLength: 50 }
+                min_salary: { type: number, minimum: 0 }
+                max_salary: { type: number, minimum: 0 }
+                default_benefits:
+                  type: array
+                  nullable: true
+                  items: { type: string }
+              required: [department_id, name, seniority_level, min_salary, max_salary]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionSuccessResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+  /positions/{position}:
+    get:
+      tags: [Public, Positions]
+      summary: Show position (public)
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/PositionId"
+      responses:
+        "200":
+          description: Position details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionSuccessResponse" }
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LaravelErrorResponse" }
+
+    put:
+      tags: [Public, Positions]
+      summary: Update position (public)
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/PositionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                department_id: { type: integer }
+                name: { type: string, maxLength: 255 }
+                seniority_level: { type: string, maxLength: 50 }
+                min_salary: { type: number, minimum: 0 }
+                max_salary: { type: number, minimum: 0 }
+                default_benefits:
+                  type: array
+                  nullable: true
+                  items: { type: string }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionSuccessResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+    patch:
+      tags: [Public, Positions]
+      summary: Partial update position (public)
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/PositionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "PATCH/PUT koriste validaciju sa 'sometimes' u kontroleru."
+              properties:
+                department_id: { type: integer }
+                name: { type: string, maxLength: 255 }
+                seniority_level: { type: string, maxLength: 50 }
+                min_salary: { type: number, minimum: 0 }
+                max_salary: { type: number, minimum: 0 }
+                default_benefits:
+                  type: array
+                  nullable: true
+                  items: { type: string }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionSuccessResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+    delete:
+      tags: [Public, Positions]
+      summary: Delete position (public)
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/PositionId"
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+
+  /departments:
+    get:
+      tags: [Departments]
+      summary: List departments
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Departments list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentsListResponse" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LaravelErrorResponse" }
+
+    post:
+      tags: [Departments]
+      summary: Create department
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, maxLength: 255 }
+                description: { type: string, nullable: true }
+              required: [name]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentSuccessResponse" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LaravelErrorResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+  /departments/{department}:
+    get:
+      tags: [Departments]
+      summary: Show department
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/DepartmentId"
+      responses:
+        "200":
+          description: Details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentSuccessResponse" }
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LaravelErrorResponse" }
+
+    put:
+      tags: [Departments]
+      summary: Update department
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/DepartmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, maxLength: 255 }
+                description: { type: string, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentSuccessResponse" }
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ValidationErrorResponse" }
+
+    patch:
+      tags: [Departments]
+      summary: Partial update department
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/DepartmentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, maxLength: 255 }
+                description: { type: string, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentSuccessResponse" }
+
+    delete:
+      tags: [Departments]
+      summary: Delete department
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/DepartmentId"
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - name: role
+          in: query
+          required: false
+          schema: { type: string, enum: [employee, hr_worker, admin] }
+        - name: status
+          in: query
+          required: false
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UsersListResponse" }
+
+    post:
+      tags: [Users]
+      summary: Create user
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 100 }
+                email: { type: string, format: email, maxLength: 150 }
+                password: { type: string, minLength: 6, maxLength: 255 }
+                role: { type: string, enum: [employee, hr_worker, admin] }
+                status: { type: boolean, nullable: true }
+                image_url: { type: string, nullable: true, maxLength: 255 }
+                position_id:
+                  type: integer
+                  nullable: true
+                  description: "Obavezno ako je role=employee."
+              required: [name, email, password, role]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserSuccessResponse" }
+        "422":
+          description: Validation / business error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/FailResponse"
+
+  /users/{user}:
+    get:
+      tags: [Users]
+      summary: Show user
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "200":
+          description: Details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserSuccessResponse" }
+
+    put:
+      tags: [Users]
+      summary: Update user
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "PUT/PATCH koriste validaciju sa 'sometimes' u kontroleru."
+              properties:
+                name: { type: string, minLength: 2, maxLength: 100 }
+                email: { type: string, format: email, maxLength: 150 }
+                password: { type: string, nullable: true, minLength: 6, maxLength: 255 }
+                role: { type: string, enum: [employee, hr_worker, admin] }
+                status: { type: boolean, nullable: true }
+                image_url: { type: string, nullable: true, maxLength: 255 }
+                position_id: { type: integer, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserSuccessResponse" }
+
+    patch:
+      tags: [Users]
+      summary: Partial update user
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 2, maxLength: 100 }
+                email: { type: string, format: email, maxLength: 150 }
+                password: { type: string, nullable: true, minLength: 6, maxLength: 255 }
+                role: { type: string, enum: [employee, hr_worker, admin] }
+                status: { type: boolean, nullable: true }
+                image_url: { type: string, nullable: true, maxLength: 255 }
+                position_id: { type: integer, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserSuccessResponse" }
+
+    delete:
+      tags: [Users]
+      summary: Delete user
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+
+  /payroll-records:
+    get:
+      tags: [Payroll]
+      summary: List payroll records
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - name: employee_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: period_year
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: period_month
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 12 }
+        - name: status
+          in: query
+          required: false
+          schema: { type: string, enum: [draft, approved, paid] }
+      responses:
+        "200":
+          description: Payroll list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollListResponse" }
+
+    post:
+      tags: [Payroll]
+      summary: Create payroll record
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                period_year: { type: integer, minimum: 2000, maximum: 2100 }
+                period_month: { type: integer, minimum: 1, maximum: 12 }
+                base_salary: { type: number, minimum: 0 }
+                bonus_amount: { type: number, nullable: true, minimum: 0 }
+                overtime_amount: { type: number, nullable: true, minimum: 0 }
+                benefits_amount: { type: number, nullable: true, minimum: 0 }
+                deductions_amount: { type: number, nullable: true, minimum: 0 }
+                net_amount:
+                  type: number
+                  nullable: true
+                  description: "Ako nije prosleđen, backend ga računa."
+                status: { type: string, enum: [draft, approved, paid] }
+              required: [employee_id, hr_worker_id, period_year, period_month, base_salary, status]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollSuccessResponse" }
+
+  /payroll-records/{payroll_record}:
+    get:
+      tags: [Payroll]
+      summary: Show payroll record
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PayrollRecordId"
+      responses:
+        "200":
+          description: Details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollSuccessResponse" }
+
+    put:
+      tags: [Payroll]
+      summary: Update payroll record
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PayrollRecordId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                period_year: { type: integer, minimum: 2000, maximum: 2100 }
+                period_month: { type: integer, minimum: 1, maximum: 12 }
+                base_salary: { type: number, minimum: 0 }
+                bonus_amount: { type: number, nullable: true, minimum: 0 }
+                overtime_amount: { type: number, nullable: true, minimum: 0 }
+                benefits_amount: { type: number, nullable: true, minimum: 0 }
+                deductions_amount: { type: number, nullable: true, minimum: 0 }
+                net_amount:
+                  type: number
+                  nullable: true
+                  description: "Ako se menja neka stavka, a net nije prosleđen, backend ga preračunava."
+                status: { type: string, enum: [draft, approved, paid] }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollSuccessResponse" }
+
+    patch:
+      tags: [Payroll]
+      summary: Partial update payroll record
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PayrollRecordId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                period_year: { type: integer, minimum: 2000, maximum: 2100 }
+                period_month: { type: integer, minimum: 1, maximum: 12 }
+                base_salary: { type: number, minimum: 0 }
+                bonus_amount: { type: number, nullable: true, minimum: 0 }
+                overtime_amount: { type: number, nullable: true, minimum: 0 }
+                benefits_amount: { type: number, nullable: true, minimum: 0 }
+                deductions_amount: { type: number, nullable: true, minimum: 0 }
+                net_amount: { type: number, nullable: true }
+                status: { type: string, enum: [draft, approved, paid] }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollSuccessResponse" }
+
+    delete:
+      tags: [Payroll]
+      summary: Delete payroll record
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PayrollRecordId"
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+
+  /performance-reviews:
+    get:
+      tags: [Performance]
+      summary: List performance reviews
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - name: employee_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: hr_worker_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: payroll_record_id
+          in: query
+          required: false
+          schema: { type: integer }
+        - name: hasSalaryImpact
+          in: query
+          required: false
+          schema: { type: boolean }
+      responses:
+        "200":
+          description: Reviews list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceReviewsListResponse" }
+
+    post:
+      tags: [Performance]
+      summary: Create performance review
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                payroll_record_id: { type: integer }
+                period_start: { type: string, format: date }
+                period_end: { type: string, format: date }
+                overall_score: { type: number, minimum: 0, maximum: 5 }
+                comments: { type: string, nullable: true }
+                goals: { type: string, nullable: true }
+                hasSalaryImpact: { type: boolean, nullable: true }
+              required: [employee_id, hr_worker_id, payroll_record_id, period_start, period_end, overall_score]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceReviewSuccessResponse" }
+
+  /performance-reviews/{performance_review}:
+    get:
+      tags: [Performance]
+      summary: Show performance review
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PerformanceReviewId"
+      responses:
+        "200":
+          description: Details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceReviewSuccessResponse" }
+
+    put:
+      tags: [Performance]
+      summary: Update performance review
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PerformanceReviewId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "PUT/PATCH koriste validaciju sa 'sometimes' u kontroleru."
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                payroll_record_id: { type: integer }
+                period_start: { type: string, format: date }
+                period_end: { type: string, format: date }
+                overall_score: { type: number, minimum: 0, maximum: 5 }
+                comments: { type: string, nullable: true }
+                goals: { type: string, nullable: true }
+                hasSalaryImpact: { type: boolean, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceReviewSuccessResponse" }
+        "422":
+          description: Validation / business error (period_end >= period_start)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ValidationErrorResponse"
+                  - $ref: "#/components/schemas/FailResponse"
+
+    patch:
+      tags: [Performance]
+      summary: Partial update performance review
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PerformanceReviewId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id: { type: integer }
+                hr_worker_id: { type: integer }
+                payroll_record_id: { type: integer }
+                period_start: { type: string, format: date }
+                period_end: { type: string, format: date }
+                overall_score: { type: number, minimum: 0, maximum: 5 }
+                comments: { type: string, nullable: true }
+                goals: { type: string, nullable: true }
+                hasSalaryImpact: { type: boolean, nullable: true }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceReviewSuccessResponse" }
+
+    delete:
+      tags: [Performance]
+      summary: Delete performance review
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - $ref: "#/components/parameters/PerformanceReviewId"
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessNullResponse" }
+
+  /stats/departments:
+    get:
+      tags: [Stats]
+      summary: Departments stats
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DepartmentsStatsResponse" }
+
+  /stats/positions:
+    get:
+      tags: [Stats]
+      summary: Positions stats
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PositionsStatsResponse" }
+
+  /stats/users:
+    get:
+      tags: [Stats]
+      summary: Users stats
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UsersStatsResponse" }
+
+  /stats/payroll:
+    get:
+      tags: [Stats]
+      summary: Payroll stats (by year)
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PayrollStatsResponse" }
+
+  /stats/performance-reviews:
+    get:
+      tags: [Stats]
+      summary: Performance reviews stats
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PerformanceStatsResponse" }
+
+  /metrics/overview:
+    get:
+      tags: [Metrics]
+      summary: App overview metrics
+      security:
+        - employeeBearer: []
+        - hrWorkerBearer: []
+        - adminBearer: []
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Overview
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MetricsOverviewResponse" }
