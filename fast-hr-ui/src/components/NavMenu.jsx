@@ -58,7 +58,6 @@ export default function NavMenu() {
 
     const hrWorker = [
       ...common,
-      { to: "/users", label: "Users", icon: <FaUsers /> },
       { to: "/departments", label: "Departments", icon: <FaSitemap /> },
       { to: "/positions", label: "Positions", icon: <FaBriefcase /> },
       { to: "/performance-reviews", label: "Performance Reviews", icon: <FaStar /> },
@@ -67,9 +66,6 @@ export default function NavMenu() {
 
     const admin = [
       ...common,
-      { to: "/admin/users", label: "User Management", icon: <FaUserShield /> },
-      { to: "/admin/departments", label: "Departments", icon: <FaSitemap /> },
-      { to: "/admin/positions", label: "Positions", icon: <FaBriefcase /> },
       { to: "/metrics", label: "Metrics", icon: <FaChartPie /> },
     ];
 

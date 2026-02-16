@@ -18,17 +18,13 @@ import MyPayroll from "./pages/MyPayroll";
 // HR worker pages (CRUD)
 import PerformanceReviews from "./pages/PerformanceReviews";
 import PayrollRecords from "./pages/PayrollRecords";
+import HrDepartments from "./pages/HrDepartments";
+import HrPositions from "./pages/HrPositions";
 
 // Shared pages (under development / placeholder)
-import Users from "./pages/Users";
-import Departments from "./pages/Departments";
-import Positions from "./pages/Positions";
 import Metrics from "./pages/Metrics";
 
-// Admin pages (separate names in your tree)
-import UsersAdmin from "./pages/UsersAdmin";
-import AdminDepartments from "./pages/AdminDepartments";
-import AdminPositions from "./pages/AdminPositions";
+
 
 function getToken() {
   return sessionStorage.getItem("fast_hr_token");
@@ -168,20 +164,12 @@ export default function App() {
         />
 
         {/* Shared / under-development pages (HR worker can also see if you want) */}
-        <Route
-          path="/users"
-          element={
-            <RoleRoute allow={["hr_worker"]}>
-              <Users />
-            </RoleRoute>
-          }
-        />
 
         <Route
           path="/departments"
           element={
             <RoleRoute allow={["hr_worker"]}>
-              <Departments />
+              <HrDepartments />
             </RoleRoute>
           }
         />
@@ -190,7 +178,7 @@ export default function App() {
           path="/positions"
           element={
             <RoleRoute allow={["hr_worker"]}>
-              <Positions />
+              <HrPositions />
             </RoleRoute>
           }
         />
@@ -200,34 +188,6 @@ export default function App() {
           element={
             <RoleRoute allow={["hr_worker", "admin"]}>
               <Metrics />
-            </RoleRoute>
-          }
-        />
-
-        {/* Admin-specific pages (renamed like in your tree) */}
-        <Route
-          path="/admin/users"
-          element={
-            <RoleRoute allow={["admin"]}>
-              <UsersAdmin />
-            </RoleRoute>
-          }
-        />
-
-        <Route
-          path="/admin/departments"
-          element={
-            <RoleRoute allow={["admin"]}>
-              <AdminDepartments />
-            </RoleRoute>
-          }
-        />
-
-        <Route
-          path="/admin/positions"
-          element={
-            <RoleRoute allow={["admin"]}>
-              <AdminPositions />
             </RoleRoute>
           }
         />
