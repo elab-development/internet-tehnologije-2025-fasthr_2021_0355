@@ -109,12 +109,12 @@ Migracije definišu šemu, a seed-eri generišu test podatke (admin/hr_worker/em
 ## Git i GitHub (verzionisanje).
 
 > Ovde unesi link do svog repozitorijuma:
-- Repo: `TODO`
+- Repo: `https://github.com/elab-development/internet-tehnologije-2025-fasthr_2021_0355.git`
 
 Kloniranje (primer):
 
 ```bash
-git clone <YOUR_REPO_URL>
+git clone https://github.com/elab-development/internet-tehnologije-2025-fasthr_2021_0355.git
 ```
 
 ---
